@@ -30,6 +30,9 @@ config = withTM({
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
 
+  // Enable standalone output for Docker
+  output: 'standalone',
+
   env: {
     MAIN_VIEW_SHOW_MAX_TOP_TOKENS_NUM:
       process.env.MAIN_VIEW_SHOW_MAX_TOP_TOKENS_NUM,
