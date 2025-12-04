@@ -3,7 +3,14 @@ FROM node:18.19.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat python3 make g++
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    git \
+    openssh-client \
+    ca-certificates
 WORKDIR /app
 
 # Copy package files
