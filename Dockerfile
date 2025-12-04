@@ -14,10 +14,18 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copy package files
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install dependencies with frozen lockfile
-RUN yarn install --frozen-lockfile --network-concurrency 1
+# The --ignore-scripts flag prevents the lavamoat preinstall hook from failing
+# We'll run allow-scripts separately after installation
+RUN yarn install --frozen-lockfile --network-concurrency 1 --ignore-scripts
+
+# Run allow-scripts to enable only whitelisted scripts
+RUN yarn allow-scripts
+
+# Run the bigint-buffer rebuild that's needed
+RUN cd node_modules/bigint-buffer && yarn rebuild && cd ../../ || true
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -30,6 +38,8 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Increase Node.js heap size to 4GB to prevent out of memory errors during build
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # Build the application
 RUN yarn build

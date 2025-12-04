@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  realms-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # Add your environment variables here or use .env file
+      # - MAINNET_RPC=${MAINNET_RPC}
+      # - DEVNET_RPC=${DEVNET_RPC}
+    restart: unless-stopped
+
